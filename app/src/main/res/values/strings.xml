@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">NourMANAI</string>
+    <string name="task1">#1 Faire les courses</string>
+    <string name="task2">#2 Faire la vaisselle</string>
+    <string name="task3">#3 Faire le ménage</string>
+    <string name="delete_task">Supprimer la tâche</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="edit_task">éditer la tâche</string>
+</resources>
