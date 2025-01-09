@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.nour.todo.R
 import com.nour.todo.databinding.ItemTaskBinding
+import coil.load
+
 
 class TaskListAdapter(
     private val listener: TaskListListener
@@ -18,18 +21,6 @@ class TaskListAdapter(
         fun bind(task: Task) {
             binding.taskTitle.text = task.title
             binding.taskDescription.text = task.description ?: "No description"
-
-            binding.root.setOnLongClickListener {
-                val intent = Intent(Intent.ACTION_SEND).apply {
-                    type = "text/plain"
-                    putExtra(
-                        Intent.EXTRA_TEXT,
-                        "Task: ${task.title}\nDescription: ${task.description ?: "No description"}"
-                    )
-                }
-                binding.root.context.startActivity(Intent.createChooser(intent, "Share Task via"))
-                true
-            }
 
             binding.deleteTaskButton.setOnClickListener {
                 listener.onClickDelete(task)

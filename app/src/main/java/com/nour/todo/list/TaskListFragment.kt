@@ -1,7 +1,6 @@
 package com.nour.todo.list
 
 import Task
-import TaskListViewModel
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -20,6 +19,7 @@ import com.nour.todo.detail.DetailActivity
 import kotlinx.coroutines.launch
 import coil.load
 import com.nour.todo.data.Api
+import com.nour.todo.viewmodel.TaskListViewModel
 
 class TaskListFragment : Fragment() {
 
@@ -92,16 +92,24 @@ class TaskListFragment : Fragment() {
                 val response = Api.userWebService.fetchUser()
                 if (response.isSuccessful) {
                     val user = response.body()!!
+                    // Met à jour le texte avec les informations utilisateur
                     binding.userTextView.text = "Utilisateur:\n${user.name} (${user.email})"
+
+                    // Charger l'avatar de l'utilisateur avec Coil
+                    binding.userAvatar.load(user.avatar) {
+                        placeholder(R.drawable.ic_baseline_avatar)
+                    }
                 } else {
                     binding.userTextView.text = "Erreur : ${response.code()} - ${response.message()}"
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 binding.userTextView.text = "Erreur de récupération des informations utilisateur"
+
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
