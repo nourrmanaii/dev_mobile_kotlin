@@ -21,6 +21,7 @@ import coil.load
 import com.nour.todo.data.Api
 import com.nour.todo.user.UserActivity
 import com.nour.todo.viewmodel.TaskListViewModel
+import com.nour.todo.viewmodel.UserViewModel
 
 class TaskListFragment : Fragment() {
 
@@ -28,6 +29,8 @@ class TaskListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: TaskListViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
+
 
     private val adapter = TaskListAdapter(object : TaskListListener {
         override fun onClickDelete(task: Task) {
@@ -96,6 +99,7 @@ class TaskListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refresh()
+        userViewModel.fetchUser()
 
         // Récupération des données utilisateur
         lifecycleScope.launch {
