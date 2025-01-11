@@ -19,6 +19,7 @@ import com.nour.todo.detail.DetailActivity
 import kotlinx.coroutines.launch
 import coil.load
 import com.nour.todo.data.Api
+import com.nour.todo.user.UserActivity
 import com.nour.todo.viewmodel.TaskListViewModel
 
 class TaskListFragment : Fragment() {
@@ -67,20 +68,30 @@ class TaskListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialisation des vues liées au binding
         binding.taskListView.layoutManager = LinearLayoutManager(requireContext())
         binding.taskListView.adapter = adapter
 
+        // Observateur des tâches
         lifecycleScope.launch {
             viewModel.tasksStateFlow.collect { tasks ->
                 adapter.submitList(tasks)
             }
         }
 
+        // Gestion du clic sur l'avatar
+        binding.userAvatar.setOnClickListener {
+            val intent = Intent(requireContext(), UserActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Gestion du bouton d'ajout
         binding.addTaskFab.setOnClickListener {
             val intent = Intent(requireContext(), DetailActivity::class.java)
             addTaskLauncher.launch(intent)
         }
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -92,23 +103,30 @@ class TaskListFragment : Fragment() {
                 val response = Api.userWebService.fetchUser()
                 if (response.isSuccessful) {
                     val user = response.body()!!
-                    // Met à jour le texte avec les informations utilisateur
+
+                    // Mise à jour des informations utilisateur
                     binding.userTextView.text = "Utilisateur:\n${user.name} (${user.email})"
 
                     // Charger l'avatar de l'utilisateur avec Coil
                     binding.userAvatar.load(user.avatar) {
-                        placeholder(R.drawable.ic_baseline_avatar)
+                        placeholder(R.drawable.ic_baseline_avatar) // Image par défaut pendant le chargement
+                        error(R.drawable.ic_launcher_background) // Image par défaut en cas d'erreur
                     }
                 } else {
+                    // Afficher un message d'erreur si la réponse n'est pas réussie
                     binding.userTextView.text = "Erreur : ${response.code()} - ${response.message()}"
+                    binding.userAvatar.setImageResource(R.drawable.ic_launcher_background) // Image par défaut
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                binding.userTextView.text = "Erreur de récupération des informations utilisateur"
 
+                // Mise à jour de l'interface utilisateur en cas d'exception
+                binding.userTextView.text = "Erreur de récupération des informations utilisateur"
+                binding.userAvatar.setImageResource(R.drawable.ic_launcher_background) // Image par défaut
             }
         }
     }
+
 
 
     override fun onDestroyView() {
